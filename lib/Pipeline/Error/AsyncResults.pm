@@ -1,4 +1,4 @@
-package Pipeline::Error::Construction;
+package Pipeline::Error::AsyncResults;
 
 use strict;
 
@@ -11,7 +11,7 @@ sub new {
   my $class = shift;
 
   my $caller = caller(1);
-  my $text = "cannot create object of type $caller";
+  my $text = "asynchronous handler returned unexpected results";
 
   local $Error::Depth = $Error::Depth + 1;
   local $Error::Debug = 1;  # Enables storing of stacktrace
@@ -21,25 +21,25 @@ sub new {
 
 1;
 
-
 =head1 NAME
 
-Pipeline::Error::Construction - exception thrown during object construction failure
+Pipeline::Error::AsyncResults - exception thrown from abstract methods
 
 =head1 SYNOPSIS
 
-  use Pipeline::Error::Construction;
-  
-  throw Pipeline::Error::Construction;
-  
+  use Pipeline::Error::AsyncResults;
+
+  throw Pipeline::Error::AsyncResults;
+
 =head1 DESCRIPTION
 
-C<Pipeline::Error::Construction> inherits from C<Error> and will be thrown by
-any constructor in the Pipeline module that fails to properly assemble itself.
+C<Pipeline::Error::AsyncResults> inherits from C<Error> and will be thrown
+whenever results back from asynchronous segments do not match the protocol
+expected.
 
 =head1 SEE ALSO
 
-C<Pipeline::Error::Abstract> C<Error>
+C<Pipeline::Segment::Async> C<Error>
 
 =head1 AUTHOR
 
@@ -52,4 +52,3 @@ Copyright 2003 Fotango Ltd. All Rights Reserved.
 This module is released under the same license as Perl itself.
 
 =cut
-

@@ -1,3 +1,8 @@
+3.08
+	+ throws an error if reattach doesn't really work properly (ie,
+	  if it gives unexpected results).
+	+ fixed a bug that meant end_dispatch was only being called if
+	  there was no parent pipeline.  This was a Bad Thing[tm].
 3.07
 	+ added dispatcher class to the pipeline
 	+ added Pipeline::Segment::Async class for asyncronous pipeline

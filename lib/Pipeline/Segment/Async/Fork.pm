@@ -7,7 +7,7 @@ use Data::UUID;
 use Pipeline::Segment::Async::Handler;
 use base qw( Pipeline::Segment::Async::Handler );
 
-our $VERSION=3.07;
+our $VERSION=3.08;
 
 sub canop { 1 }
 

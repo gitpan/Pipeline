@@ -4,12 +4,13 @@ use strict;
 use warnings;
 
 use Pipeline::Segment;
+use Pipeline::Error::AsyncResults;
 use Pipeline::Segment::Async::Fork;
 use Pipeline::Segment::Async::IThreads;
 
 use base qw( Pipeline::Segment );
 
-our $VERSION=3.07;
+our $VERSION=3.08;
 
 sub init {
   my $self = shift;
@@ -82,7 +83,11 @@ sub determine_threading_model {
 sub reattach {
   my $self = shift;
   my $results = $self->model->reattach;
-  return @{ $results->[1] };
+  if (defined($results) && ref($results) eq 'ARRAY') {
+    return @{ $results->[1] };
+  } else {
+    throw Pipeline::Error::AsyncResults;
+  }
 }
 
 sub discard {

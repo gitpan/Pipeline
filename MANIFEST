@@ -7,6 +7,7 @@ lib/Pipeline.pm
 lib/Pipeline/Base.pm
 lib/Pipeline/Error/Abstract.pm
 lib/Pipeline/Error/Construction.pm
+lib/Pipeline/Error/AsyncResults.pm
 lib/Pipeline/Production.pm
 lib/Pipeline/Segment.pm
 lib/Pipeline/Store.pm

@@ -11,7 +11,7 @@ use base qw( Pipeline::Segment );
 
 $::PIPES = 0;
 
-our $VERSION=3.07;
+our $VERSION=3.08;
 
 sub init {
   my $self = shift;
@@ -81,9 +81,7 @@ sub start_dispatch {
 
 sub end_dispatch {
   my $self = shift;
-  if (!$self->parent) {
-    $self->store->end_transaction;
-  };
+  $self->store->end_transaction;
 }
 
 sub dispatch_loop {

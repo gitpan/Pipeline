@@ -7,7 +7,7 @@ use Pipeline;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.07;
+our $VERSION=3.08;
 
 sub segments {
   my $self = shift;

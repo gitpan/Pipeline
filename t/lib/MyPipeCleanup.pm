@@ -8,7 +8,9 @@ use base qw ( Pipeline::Segment );
 sub dispatch {
   ## resets the number of instances that the MyPipe class
   ## has created
+
   $MyPipe::instance = 0;
+  return 1;
 }
 
 1;

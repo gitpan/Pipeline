@@ -4,11 +4,12 @@ use strict;
 use warnings::register;
 
 use Pipeline::Base;
+use Scalar::Util qw( weaken );
 use Pipeline::Error::Abstract;
 
 use base qw( Pipeline::Base );
 
-our $VERSION=3.04;
+our $VERSION=3.06;
 
 sub init {
   my $self = shift;

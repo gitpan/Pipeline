@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline;
 use Pipeline::Base;
 use base qw(Pipeline::Base);
-our $VERSION=3.04;
+our $VERSION=3.06;
 
 sub init {
   my $self = shift;
@@ -35,8 +35,9 @@ sub test {
 
   $self->pipe->add_segment($seg);
   $self->pipe->store->set($_) foreach @_;
-
-  return $self->pipe->dispatch();
+  $self->pipe->debug( 1 ); 
+  return (wantarray) ? ($self->pipe->dispatch) : [$self->pipe->dispatch];
+#  return $self->pipe->dispatch();
 }
 
 1;

@@ -1,4 +1,5 @@
 README
+Changes
 MANIFEST			This list of files
 Makefile.PL
 lib/Pipeline.pm
@@ -18,6 +19,8 @@ t/04storepipe.t
 t/05production.t
 t/06segment.t
 t/07base.t
+t/08tester.t
+t/09fitzgibbon.t
 t/98compile.t
 t/99pod.t
 t/lib/Dye.pm

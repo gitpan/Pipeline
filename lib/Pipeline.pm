@@ -5,10 +5,12 @@ use warnings::register;
 
 use Pipeline::Segment;
 use Pipeline::Store::Simple;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed weaken );
 use base qw( Pipeline::Segment );
 
-our $VERSION=3.04;
+$::PIPES = 0;
+
+our $VERSION=3.06;
 
 sub init {
   my $self = shift;
@@ -24,7 +26,8 @@ sub init {
 
 sub add_segment {
   my $self = shift;
-  push @{ $self->segments }, grep { blessed( $_ ) && $_->isa('Pipeline::Segment') } @_;
+  my @segs = grep { blessed( $_ ) && $_->isa('Pipeline::Segment') } @_;
+  push @{ $self->segments }, @_;
   return $self;
 }
 
@@ -44,7 +47,7 @@ sub segments {
   my $self = shift;
   my $segs = shift;
   if (defined( $segs )) {
-    $self->{ segments } = $segs; 
+    $self->{ segments } = $segs;
     return $self;
   } else {
     return $self->{ segments };
@@ -54,36 +57,71 @@ sub segments {
 sub dispatch {
   my $self = shift;
 
-  my $result = $self->dispatch_loop();
+#  $self->store->start_transaction;
+  $self->start_dispatch();
 
-  $self->cleanup;
+  my $result;
+  eval {
+    $result = $self->dispatch_loop();
+  };
+  if ($@) {
+    #$self->clean_transaction_store;
+    $self->end_dispatch();
+  }
 
-  return $result || 1;
+  my $cleanup_result = $self->cleanup;
+
+#  $self->clean_transaction_store;
+
+#  $self->store->end_transaction;
+  $self->end_dispatch();
+
+  if (blessed( $result )) {
+    return $result->isa('Pipeline::Production') ?
+      $result->contents :
+      $result || 1;
+  } else {
+    return $result || 1;
+  }
+}
+
+sub start_dispatch {
+  my $self = shift;
+  $self->store->start_transaction;
+}
+
+sub end_dispatch {
+  my $self = shift;
+  if (!$self->parent) {
+    $self->store->end_transaction;
+  };
 }
 
 sub dispatch_loop {
   my $self = shift;
   foreach my $segment (@{ $self->segments }) {
+    my $final;
     my @results = $self->dispatch_segment( $segment );
     foreach my $result ( @results ) {
       next unless blessed $result;
       if ( $result->isa('Pipeline::Segment') ) {
         $self->cleanups->add_segment( $result )
       } elsif ( $result->isa('Pipeline::Production') ) {
-        my $final = $result->contents;
-        $self->store->set( $final );
-        return $final;
+        $final = $result;
+        $self->store->set( $result->contents );
       } else {
         $self->store->set( $result );
       }
     }
+    return $final if $final;
   }
+  return 1;
 }
 
 sub dispatch_segment {
   my $self = shift;
   my $segment = shift;
-  
+
   $segment->parent( $self );
   $segment->store( $self->store );
 
@@ -91,7 +129,7 @@ sub dispatch_segment {
 
   my @results = $segment->dispatch( $self );
 
-#  $segment->parent( '' );
+  $segment->parent( '' );
   $segment->store( '' );
 
   return @results;
@@ -102,33 +140,17 @@ sub dispatch_segment {
 sub cleanup {
   my $self = shift;
   if ($self->{ cleanup_pipeline }) {
-    $self->{ cleanup_pipeline }->debug( $self->debug || 0 )
-                               ->parent( $self )
-                               ->store( $self->store() )
-                               ->dispatch();
+    return ($self->{ cleanup_pipeline }->debug( $self->debug || 0 )
+                                       ->parent( $self )
+                                       ->store( $self->store() )
+                                       ->dispatch());
   }
-  
-  if (!$self->parent) {
-    $::TRANSACTION_STORE = undef;
-  }
-  
+  $self->end_dispatch();
 }
 
 sub cleanups {
   my $self = shift;
   $self->{ cleanup_pipeline } ||= ref($self)->new();
-}
-
-sub DESTROY {
-  my $self = shift;
-  $self->clean_transaction_store();
-}
-
-sub clean_transaction_store {
-  my $self = shift;
-  if (!$self->parent) {
-    $::TRANSACTION_STORE = undef;
-  } 
 }
 
 sub debug_all {

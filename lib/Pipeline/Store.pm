@@ -6,11 +6,31 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.04;
+our $VERSION=3.06;
 
 sub new {
   my $class = shift;
-  return $::TRANSACTION_STORE ||= $class->SUPER::new( @_ );
+  if ( $class->in_transaction() ) {
+    return $::TRANSACTION_STORE;
+  } else {
+    my $store = $class->SUPER::new( @_ );
+  }
+}
+
+sub start_transaction {
+  my $self = shift;
+  $::TRANSACTION = 1;
+  $::TRANSACTION_STORE = $self;
+}
+
+sub in_transaction {
+  my $self = shift;
+  $::TRANSACTION;
+}
+
+sub end_transaction {
+  my $self = shift;
+  $::TRANSACTION = 0;
 }
 
 sub init {
@@ -28,6 +48,11 @@ sub set {
 
 sub get {
   throw Pipeline::Error::Abstract;
+}
+
+sub DESTROY {
+  my $self = shift;
+  $self->end_transaction;
 }
 
 1;

@@ -12,7 +12,7 @@ BEGIN {
 }
 
 use lib './lib';
-use lib 'oldt/lib';
+#use lib 'oldt/lib';
 use lib 't/lib';
 use Dye;
 use Tap;
@@ -31,6 +31,7 @@ is($water->colour, 'light slate blue', "water should be light slate blue");
 # Create a water pipeline with red and blue dyes
 
 my $pipeline = Pipeline->new();
+#$pipeline->debug( 1 );
 $pipeline->add_segment(
   Tap->new(type => 'in'  ),
   Dye->new( ink => 'red' ),

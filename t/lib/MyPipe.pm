@@ -4,7 +4,7 @@ use MyPipeCleanup;
 use Pipeline::Segment;
 use Pipeline::Production;
 use base qw ( Pipeline::Segment );
-my $instance = 0;
+$MyPipe::instance = 0;
 
 sub init {
   my $self = shift;

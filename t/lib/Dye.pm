@@ -12,10 +12,11 @@ sub init {
 
 sub dispatch {
   my($self, $pipe) = @_;
-
   my $water = $pipe->store->get('Water');
   $water->dye($self->{ink});
-  return $water;
+  $pipe->store->set($water);
+
+  return 1;
 }
 
 1;

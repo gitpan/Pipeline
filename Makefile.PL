@@ -17,6 +17,7 @@ WriteMakefile(
 			    Scalar::Util => '0.01',
 			    Class::ISA   => '0.01',
 			    Test::More => '0.01',
+			    Error      => '0.01',
 			   }
 	     );
 

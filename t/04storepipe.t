@@ -1,4 +1,4 @@
-use Test::Simple tests => 2;
+use Test::Simple tests => 3;
 
 use Pipeline;
 use Pipeline::Segment;
@@ -6,6 +6,16 @@ use Pipeline::Segment;
 package MyElem;
 
 use base qw ( Pipeline::Base );
+
+package TwoTest;
+
+use base qw( Pipeline::Segment );
+
+sub dispatch {
+  my $self = shift;
+  my $pipe = shift;
+  main::ok(Pipeline::Store::Simple->new()->get('MyElem'), "got expected elem from transaction store");
+}
 
 package MyTest;
 
@@ -27,7 +37,7 @@ my $pipe2 = Pipeline->new();
 
 $pipe2->add_segment( MyTest->new() );
 $pipe1->add_segment( MyTest->new() );
-
+$pipe1->add_segment( TwoTest->new() );
 $pipe1->store()->set($storeelem);
 $pipe1->add_segment( $pipe2 );
 

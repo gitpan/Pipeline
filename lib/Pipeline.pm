@@ -8,7 +8,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw( blessed );
 use base qw( Pipeline::Segment );
 
-our $VERSION=3.03;
+our $VERSION=3.04;
 
 sub init {
   my $self = shift;
@@ -53,6 +53,7 @@ sub segments {
 
 sub dispatch {
   my $self = shift;
+
   my $result = $self->dispatch_loop();
 
   $self->cleanup;
@@ -90,7 +91,7 @@ sub dispatch_segment {
 
   my @results = $segment->dispatch( $self );
 
-  $segment->parent( '' );
+#  $segment->parent( '' );
   $segment->store( '' );
 
   return @results;
@@ -120,9 +121,14 @@ sub cleanups {
 
 sub DESTROY {
   my $self = shift;
+  $self->clean_transaction_store();
+}
+
+sub clean_transaction_store {
+  my $self = shift;
   if (!$self->parent) {
     $::TRANSACTION_STORE = undef;
-  }
+  } 
 }
 
 sub debug_all {

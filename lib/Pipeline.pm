@@ -8,11 +8,12 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw( blessed );
 use base qw( Pipeline::Segment );
 
-our $VERSION = '3.00';
+our $VERSION = 3.01;
 
 sub init {
   my $self = shift;
   if ($self->SUPER::init( @_ )) {
+    $self->debug( 0 );
     $self->store( Pipeline::Store::Simple->new() );
     $self->segments( [] );
     return 1;
@@ -99,7 +100,7 @@ sub dispatch_segment {
 sub cleanup {
   my $self = shift;
   if ($self->{ cleanup_pipeline }) {
-    $self->{ cleanup_pipeline }
+    $self->{ cleanup_pipeline }->debug( $self->debug || 0 )
                                ->parent( $self )
                                ->store( $self->store() )
                                ->dispatch();

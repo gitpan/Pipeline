@@ -6,7 +6,7 @@ use warnings::register;
 use Error;
 use Pipeline::Error::Construction;
 
-our $VERSION = '3.00';
+our $VERSION = 3.01;
 
 sub new {
   my $class = shift;

@@ -10,6 +10,7 @@ lib/Pipeline/Segment.pm
 lib/Pipeline/Store.pm
 lib/Pipeline/Store/ISA.pm
 lib/Pipeline/Store/Simple.pm
+lib/Pipeline/Segment/Tester.pm
 t/00load.t
 t/01simple.t
 t/03colour.t

@@ -4,6 +4,7 @@ use strict;
 use warnings::register;
 
 use Pipeline;
+our $VERSION = '2.02';
 
 sub new {
   my $class = shift;

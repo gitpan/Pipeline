@@ -9,7 +9,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw ( blessed );
 use base qw ( Pipeline::Segment );
 
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 
 sub init {
   my $self = shift;
@@ -77,6 +77,7 @@ sub dispatch_loop {
 	}
       }
     }
+    if ($result) { return $result };
   }
 
   return $result;

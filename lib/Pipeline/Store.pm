@@ -3,6 +3,8 @@ package Pipeline::Store;
 use strict;
 use warnings::register;
 
+our $VERSION = '2.02';
+
 sub new {
   my $class = shift;
   my $self  = {};

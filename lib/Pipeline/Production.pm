@@ -3,7 +3,7 @@ package Pipeline::Production;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.00';
+our $VERSION = '2.02';
 
 sub new {
   my $class = shift;

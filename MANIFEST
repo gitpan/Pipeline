@@ -1,25 +1,26 @@
+README
 CHANGES
+MANIFEST			This list of files
+NINJA
+Makefile.PL
 lib/Pipeline.pm
+lib/Pipeline/Analyser.pm
 lib/Pipeline/Base.pm
-lib/Pipeline/Dispatch.pm
-lib/Pipeline/Dumper.pm
 lib/Pipeline/Error/Abstract.pm
-lib/Pipeline/Error/AsyncResults.pm
 lib/Pipeline/Error/Construction.pm
+lib/Pipeline/Error/AsyncResults.pm
 lib/Pipeline/Production.pm
 lib/Pipeline/Segment.pm
-lib/Pipeline/Segment/Async.pm
-lib/Pipeline/Segment/Async/Fork.pm
-lib/Pipeline/Segment/Async/Handler.pm
-lib/Pipeline/Segment/Async/IThreads.pm
-lib/Pipeline/Segment/Tester.pm
 lib/Pipeline/Store.pm
 lib/Pipeline/Store/ISA.pm
 lib/Pipeline/Store/Simple.pm
-Makefile.PL
-MANIFEST			This list of files
-NINJA
-README
+lib/Pipeline/Segment/Tester.pm
+lib/Pipeline/Segment/Async.pm
+lib/Pipeline/Segment/Async/Handler.pm
+lib/Pipeline/Segment/Async/IThreads.pm
+lib/Pipeline/Segment/Async/Fork.pm
+lib/Pipeline/Dispatch.pm
+lib/Pipeline/Dumper.pm
 t/00load.t
 t/01simple.t
 t/03colour.t
@@ -36,7 +37,6 @@ t/13emit.t
 t/14transaction.t
 t/15nestedstore.t
 t/16destroy.t
-t/17isa_store.t
 t/98compile.t
 t/99pod.t
 t/lib/Dye.pm
@@ -44,3 +44,4 @@ t/lib/MyPipe.pm
 t/lib/MyPipeCleanup.pm
 t/lib/Tap.pm
 t/lib/Water.pm
+META.yml                                Module meta-data (added by MakeMaker)

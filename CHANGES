@@ -1,3 +1,8 @@
+3.11
+	+ Pipeline::Analyse was missing. (generally release
+	  opensource.fotango.com/svn/trunk/Pipeline to the
+          wider world --richardc)
+
 3.10
 	+ Applied patches from spurkis@cpan.org re:
 		http://rt.cpan.org/NoAuth/Bug.html?id=6305

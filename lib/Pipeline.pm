@@ -9,7 +9,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw( blessed weaken );
 use base qw( Pipeline::Segment );
 
-our $VERSION="3.11";
+our $VERSION = "3.12";
 
 sub init {
   my $self = shift;

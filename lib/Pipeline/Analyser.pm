@@ -6,7 +6,7 @@ use IO::Handle;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.09;
+our $VERSION = "3.12";
 
 sub init {
   my $self = shift;
@@ -47,16 +47,16 @@ sub decrement_level {
 sub enter {
   my $self = shift;
   $self->handle->print(" " x (($self->level - 1) * $self->spacing));
-  $self->handle->print("|");
-  $self->handle->print("<" x $self->spacing);
-  $self->handle->print(" [ pipeline exit ]\n");
+  $self->handle->print(">" x $self->spacing);
+  $self->handle->print("| [ pipeline enter ]\n");
 }
 
 sub leave {
   my $self = shift;
   $self->handle->print(" " x (($self->level - 1) * $self->spacing));
-  $self->handle->print(">" x $self->spacing);
-  $self->handle->print("| [ pipeline enter ]\n");
+  $self->handle->print("|");
+  $self->handle->print("<" x $self->spacing);
+  $self->handle->print(" [ pipeline exit ]\n");
 }
 
 sub level {

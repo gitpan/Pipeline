@@ -1,5 +1,10 @@
+3.12
+	+ Pipeline::Analyser was producing output incompatible
+	  with internal Fotango version.  Fotango version wins.
+	  (Tom Insam)
+	
 3.11
-	+ Pipeline::Analyse was missing. (generally release
+	+ Pipeline::Analyser was missing. (generally release
 	  opensource.fotango.com/svn/trunk/Pipeline to the
           wider world --richardc)
 

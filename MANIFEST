@@ -9,6 +9,7 @@ lib/Pipeline/Base.pm
 lib/Pipeline/Error/Abstract.pm
 lib/Pipeline/Error/Construction.pm
 lib/Pipeline/Error/AsyncResults.pm
+lib/Pipeline/Analyser.pm
 lib/Pipeline/Production.pm
 lib/Pipeline/Segment.pm
 lib/Pipeline/Store.pm
@@ -37,6 +38,7 @@ t/13emit.t
 t/14transaction.t
 t/15nestedstore.t
 t/16destroy.t
+t/17isa_store.t
 t/98compile.t
 t/99pod.t
 t/lib/Dye.pm

@@ -10,7 +10,7 @@ use Pipeline::Segment::Async::IThreads;
 
 use base qw( Pipeline::Segment );
 
-our $VERSION="3.10";
+our $VERSION = "3.12";
 
 sub init {
   my $self = shift;

@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.06;
+our $VERSION=3.07;
 
 sub init {
   my $self = shift;

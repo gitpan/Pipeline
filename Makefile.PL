@@ -17,7 +17,10 @@ WriteMakefile(
 			    Scalar::Util => '0.01',
 			    Class::ISA   => '0.01',
 			    Test::More => '0.01',
-			    Error      => '0.01',
+			    Error      => '0.15',
+			    IO::Null   => '0.01',
+			    IO::String => '0.01',
+			    Data::UUID => '0.01',
 			   }
 	     );
 

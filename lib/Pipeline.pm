@@ -4,19 +4,21 @@ use strict;
 use warnings::register;
 
 use Pipeline::Segment;
+use Pipeline::Dispatch;
 use Pipeline::Store::Simple;
 use Scalar::Util qw( blessed weaken );
 use base qw( Pipeline::Segment );
 
 $::PIPES = 0;
 
-our $VERSION=3.06;
+our $VERSION=3.07;
 
 sub init {
   my $self = shift;
   if ($self->SUPER::init( @_ )) {
     $self->debug( 0 );
     $self->store( Pipeline::Store::Simple->new() );
+    $self->dispatcher( Pipeline::Dispatch->new() );
     $self->segments( [] );
     return $self;
   } else {
@@ -26,25 +28,27 @@ sub init {
 
 sub add_segment {
   my $self = shift;
-  my @segs = grep { blessed( $_ ) && $_->isa('Pipeline::Segment') } @_;
-  push @{ $self->segments }, @_;
-  return $self;
+  $self->dispatcher->add( @_ );
+  $self;
 }
 
 sub get_segment {
   my $self = shift;
   my $idx  = shift;
-  return $self->segments->[ $idx ];
+  return $self->dispatcher()->get( $idx );
 }
 
 sub del_segment {
   my $self = shift;
   my $idx  = shift;
-  splice( @{ $self->segments }, $idx, 1 );
+  my $seg = $self->segments()->[ $idx ];
+  $self->dispatcher()->delete( $idx );
+  $seg;
 }
 
 sub segments {
   my $self = shift;
+  return $self->dispatcher()->segments( @_ );
   my $segs = shift;
   if (defined( $segs )) {
     $self->{ segments } = $segs;
@@ -57,24 +61,9 @@ sub segments {
 sub dispatch {
   my $self = shift;
 
-#  $self->store->start_transaction;
-  $self->start_dispatch();
-
-  my $result;
-  eval {
-    $result = $self->dispatch_loop();
-  };
-  if ($@) {
-    #$self->clean_transaction_store;
-    $self->end_dispatch();
-  }
-
+  my $result = $self->dispatch_loop();
   my $cleanup_result = $self->cleanup;
-
-#  $self->clean_transaction_store;
-
-#  $self->store->end_transaction;
-  $self->end_dispatch();
+  $self->dispatcher()->reset();
 
   if (blessed( $result )) {
     return $result->isa('Pipeline::Production') ?
@@ -99,9 +88,9 @@ sub end_dispatch {
 
 sub dispatch_loop {
   my $self = shift;
-  foreach my $segment (@{ $self->segments }) {
+  while($self->dispatcher->segment_available) {
+    my @results = $self->dispatcher->next( $self );
     my $final;
-    my @results = $self->dispatch_segment( $segment );
     foreach my $result ( @results ) {
       next unless blessed $result;
       if ( $result->isa('Pipeline::Segment') ) {
@@ -118,25 +107,7 @@ sub dispatch_loop {
   return 1;
 }
 
-sub dispatch_segment {
-  my $self = shift;
-  my $segment = shift;
-
-  $segment->parent( $self );
-  $segment->store( $self->store );
-
-  $self->emit("dispatching to " . ref($segment));
-
-  my @results = $segment->dispatch( $self );
-
-  $segment->parent( '' );
-  $segment->store( '' );
-
-  return @results;
-}
-
 ## be careful here
-
 sub cleanup {
   my $self = shift;
   if ($self->{ cleanup_pipeline }) {
@@ -146,6 +117,17 @@ sub cleanup {
                                        ->dispatch());
   }
   $self->end_dispatch();
+}
+
+sub dispatcher {
+  my $self = shift;
+  my $obj  = shift;
+  if (defined( $obj )) {
+    $self->{ dispatcher } = $obj;
+    return $self;
+  } else {
+    return $self->{ dispatcher };
+  }
 }
 
 sub cleanups {
@@ -203,7 +185,7 @@ To start the pipeline running call the I<dispatch()> method on your Pipeline
 object.
 
 To see what is being dispatched within a pipeline dispatch set the pipeline's
-debug value to true.  
+debug value to true.
 
 =head1 WRITING A PIPELINE
 
@@ -225,7 +207,7 @@ also has any additional methods that its superclass may have.
 
 =item init( @_ )
 
-Things to do at construction time.  If you do override this, its will often
+Things to do at construction time.  If you do override this, it will often
 be fairly important that you call $self->SUPER::init(@_) to make sure that
 the setup is done correctly.  Returns itself on success, undef on failure.
 
@@ -256,12 +238,12 @@ segment object.
 
 =item cleanups()
 
-Returns the cleanup pipeline.  This is a pipeline in and of itself, and all the methods
-you can call on a pipeline can also be called on this.
+Returns the cleanup pipeline.  This is a pipeline in and of itself, and all
+the methods you can call on a pipeline can also be called on this.
 
 =item cleanup()
 
-Starts the cleanup pipeline going
+Calls the dispatch method on the cleanup pipeline.
 
 =item segments( [ value ] )
 
@@ -270,7 +252,7 @@ this is set to an array reference.
 
 =item debug_all( value )
 
-sets debug( value ) recursively for each segment in this pipeline.
+Sets debug( value ) recursively for each segment in this pipeline.
 
 =back
 

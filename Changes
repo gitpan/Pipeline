@@ -1,6 +1,17 @@
+3.07
+	+ added dispatcher class to the pipeline
+	+ added Pipeline::Segment::Async class for asyncronous pipeline
+	  segments.
+	+ fixed a bug introduced in 3.06 that broke tests relying on
+	  Pipeline::Segment::Tester.
+	+ Transaction store is flagged at the beginning of a segment
+	  dispatch, and the flag is removed at the end of a dispatch.
+	+ Fixed a bug that meant the pipeline could not be dispatched twice.
+
 3.06
 	+ fixed production returning bug
-	+ fixes bug reported by James Fitzgibbon regarding subclassing pipeline stores
+	+ fixes bug reported by James Fitzgibbon regarding subclassing
+	  pipeline stores
 3.05
 	+ thought of another test, exposed a bug, fixed it
 3.04

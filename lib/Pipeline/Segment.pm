@@ -9,7 +9,7 @@ use Pipeline::Error::Abstract;
 
 use base qw( Pipeline::Base );
 
-our $VERSION=3.06;
+our $VERSION=3.07;
 
 sub init {
   my $self = shift;
@@ -24,6 +24,8 @@ sub init {
 sub dispatch {
   throw Pipeline::Error::Abstract;
 }
+
+sub dispatch_method { undef }
 
 sub parent {
   my $self = shift;
@@ -82,6 +84,11 @@ C<new> method are passed to it.
 
 The C<dispatch> method causes the segment to perform its action.
 
+=item dispatch_method()
+
+The C<dispatch_method> gets and sets the method that gets called on dispatch, by
+default this is the C<dispatch()> method.
+
 =item store()
 
 The C<store> method gets the current store.
@@ -95,7 +102,7 @@ It is set at dispatch time by the calling pipeline.
 
 =head1 SEE ALSO
 
-C<Pipeline>
+C<Pipeline>, C<Pipeline::Segment::Async>
 
 =head1 AUTHOR
 

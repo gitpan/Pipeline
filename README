@@ -41,19 +41,21 @@ WRITING A PIPELINE
     The Pipeline class inherits from the "Pipeline::Segment" class and
     therefore also has any additional methods that its superclass may have.
 
-    init()
-        Things to do at construction time. If you do override this, its will
+    init( @_ )
+        Things to do at construction time. If you do override this, it will
         often be fairly important that you call $self->SUPER::init(@_) to
-        make sure that the setup is done correctly.
+        make sure that the setup is done correctly. Returns itself on
+        success, undef on failure.
 
     add_segment( LIST )
-        Adds a segment or segments to the pipeline.
+        Adds a segment or segments to the pipeline. Returns itself.
 
     get_segment( INTEGER )
         Returns the segment located at the index specified by INTEGER
 
     del_segment( INTEGER )
-        Deletes the segment located at the index specified by INTEGER
+        Deletes and returns the segment located at the index specified by
+        INTEGER
 
     dispatch()
         Starts the pipeline execution, returns the production or undef
@@ -71,11 +73,14 @@ WRITING A PIPELINE
         this.
 
     cleanup()
-        Starts the cleanup pipeline going
+        Calls the dispatch method on the cleanup pipeline.
 
     segments( [ value ] )
         "segments" gets and sets the value of the pipeline list. At
         initialization this is set to an array reference.
+
+    debug_all( value )
+        Sets debug( value ) recursively for each segment in this pipeline.
 
 SEE ALSO
     "Pipeline::Segment", "Pipeline::Store", "Pipeline::Store::Simple"

@@ -42,7 +42,7 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright 2002 Fotango Ltd. All Rights Reserved.
+Copyright 2003 Fotango Ltd. All Rights Reserved.
 
 This software is released under the same terms as Perl itself.
 

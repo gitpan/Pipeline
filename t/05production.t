@@ -22,7 +22,7 @@ ok( $second,   "created second pipeline");
 
 $pipeline->add_segment( $final, $real );
 
-ok( @{$pipeline->segments()} == 2, "five segments in pipeline");
+ok( @{$pipeline->segments()} == 2, "correct # of segments in pipeline");
 
 my $num = $pipeline->dispatch();
 

@@ -1,3 +1,7 @@
+3.10
+	+ Applied patches from spurkis@cpan.org re:
+		http://rt.cpan.org/NoAuth/Bug.html?id=6305
+
 3.09
 	+ Added weak references to stop a memory leak when we miss
 	  cleaning up the parent of a segment after dispatch -- this

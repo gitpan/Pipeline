@@ -8,7 +8,7 @@ use base qw ( Pipeline::Store );
 
 use Class::ISA;
 
-our $VERSION=3.09;
+our $VERSION="3.10";
 
 sub init {
   my $self = shift;
@@ -43,9 +43,10 @@ sub set {
   my $store = $self->isa_store;
   foreach my $isa (@isa) {
     if (!exists $self->isa_store->{ $isa }) {
-      $store->{ $isa } = [];
+      $store->{ $isa } = {};
     }
-    push @{$store->{ $isa }}, ref($obj);
+    $store->{ $isa }->{ ref($obj) } = 1;
+    #push @{$store->{ $isa }}, ref($obj);
   }
   $self->obj_store->{ref($obj)} = $obj;
   $self->emit("setting object " . ref($obj));
@@ -63,10 +64,11 @@ sub get {
     return $self->obj_store->{ $key };
   } elsif (exists( $self->isa_store->{$key})) {
     my @objs;
-    foreach my $thing ( @{$self->isa_store->{ $key }} ) {
+    foreach my $thing ( keys %{$self->isa_store->{ $key }} ) {
       push @objs, $self->get( $thing );
     }
-    return [ @objs ];
+    return [ @objs ] if (@objs > 1);
+    return $objs[0];
   } else {
     $self->emit("no object $key");
     return undef;
@@ -106,7 +108,8 @@ includes its methods also.
 
 =item set( OBJECT )
 
-The C<set> method stores an object specified by OBJECT in itself.
+The C<set> method stores an object specified by OBJECT in itself.  Replaces
+existing objects of the same type.
 
 =item get( SCALAR )
 

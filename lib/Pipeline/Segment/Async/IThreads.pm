@@ -2,7 +2,7 @@ package Pipeline::Segment::Async::IThreads;
 
 use strict;
 use warnings;
-our $VERSION=3.09;
+our $VERSION="3.10";
 
 BEGIN {
   use Config;

@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 
 sub new {
   my $class = shift;

@@ -3,7 +3,7 @@ package Pipeline::Segment;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 
 use Pipeline::Base;
 use base qw ( Pipeline::Base );
@@ -16,7 +16,12 @@ sub new {
   return $self;
 }
 
-sub init { my $self = shift; }
+sub init {
+  my $self = shift;
+  if ($self->SUPER::init()) {
+    return 1;
+  }
+}
 
 sub dispatch {
   my $self = shift;

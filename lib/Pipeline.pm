@@ -9,7 +9,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw ( blessed );
 use base qw ( Pipeline::Segment );
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 
 sub init {
   my $self = shift;
@@ -41,12 +41,13 @@ sub dispatch_loop {
   my $parent = shift || $self;
   my $torun  = shift || $self->pipeline;
 
-  my $result;
   foreach my $seg ( @$torun ) {
-
+    my $result;
+    next unless ref($seg);
     if ($seg->isa('Pipeline')) {
       $seg->store( $parent->store );
     }
+
     my @result = $parent->dispatch_segment( $seg );
 
     foreach my $res (@result) {
@@ -61,6 +62,7 @@ sub dispatch_loop {
 	    $result = $res;
 	  }
 	  $parent->store->set( $res );
+	  return $result;
 	} 
 	## is it a segment to cleanup?
 	elsif ($res->isa("Pipeline::Segment")) {
@@ -75,7 +77,7 @@ sub dispatch_loop {
     if ($result) { return $result };
   }
 
-  return $result;
+  return 1;
 }
 
 sub dispatch_segment {

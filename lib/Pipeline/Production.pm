@@ -3,7 +3,7 @@ package Pipeline::Production;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 use Pipeline::Base;
 use base qw ( Pipeline::Base );
 

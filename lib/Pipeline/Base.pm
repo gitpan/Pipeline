@@ -3,7 +3,7 @@ package Pipeline::Base;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 
 sub new {
   my $class = shift;
@@ -13,10 +13,14 @@ sub new {
   return $self;
 }
 
-sub init { my $self = shift; }
+sub init {
+  my $self = shift;
+  return 1;
+}
 
 sub debug {
   my $self = shift;
+  return 1 unless ref( $self );
   my $dbg  = shift;
   if (defined($dbg)) {
     $self->{debug} = $dbg;

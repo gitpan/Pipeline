@@ -22,7 +22,7 @@ ok($pipeline, "we have a pipeline");
 my $production = $pipeline->dispatch();
 ok(ref($production) eq 'MyPipe', "valid production received");
 ok(
-   $MyPipe::instance == 0,
+   !defined($MyPipe::instance), #  && $MyPipe::instance == 0,
    "cleanup was executed (instance was set to zero)\n"
   );
 

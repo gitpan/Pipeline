@@ -8,7 +8,7 @@ use base qw ( Pipeline::Store );
 
 use Class::ISA;
 
-our $VERSION = '2.04';
+our $VERSION = "2.05";
 
 sub set {
   my $self = shift;

@@ -6,11 +6,12 @@ use warnings::register;
 use Pipeline::Store;
 use base qw ( Pipeline::Store );
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 sub set {
   my $self = shift;
   my $thing = shift;
+  $self->emit("storing " . ref($thing));
   $self->store->{ ref( $thing ) } = $thing;
   return $self;
 }
@@ -18,6 +19,8 @@ sub set {
 sub get {
   my $self = shift;
   my $this = shift;
+
+  $self->emit("fetching $this");
 
   ## is something requesting a copy of 
   ## the store?
@@ -32,7 +35,7 @@ sub get {
 1;
 
 
-=head1 
+=head1 NAME
 
 Pipeline::Store::Simple - simple store for pipelines
 
@@ -69,6 +72,10 @@ by SCALAR.  If an object of that class does not exist in the store it
 returns undef instead.
 
 =back
+
+=head1 SEE ALSO
+
+C<Pipeline>, C<Pipeline::Store>, C<Pipeline::Store::ISA>
 
 =head1 AUTHOR
 

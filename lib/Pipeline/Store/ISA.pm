@@ -8,7 +8,7 @@ use base qw ( Pipeline::Store );
 
 use Class::ISA;
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 sub set {
   my $self = shift;
@@ -40,7 +40,7 @@ sub get {
 1;
 
 
-=head1 
+=head1 NAME
 
 Pipeline::Store::ISA - inheritance-based store for pipelines
 
@@ -79,6 +79,10 @@ by SCALAR.  If an object of that class does not exist in the store it
 returns undef instead.
 
 =back
+
+=head1 SEE ALSO
+
+C<Pipeline>, C<Pipeline::Store>, C<Pipeline::Store::Simple>
 
 =head1 AUTHOR
 

@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 sub new {
   my $class = shift;
@@ -86,6 +86,10 @@ Does nothing in Pipeline::Store - exists as a placeholder for subclasses.
 Does nothing in Pipeline::Store - exists as a placeholder for subclasses.
 
 =back
+
+=head1 SEE ALSO
+
+C<Pipeline>, C<Pipeline::Store::Simple>, C<Pipeline::Store::ISA>
 
 =head1 AUTHOR
 

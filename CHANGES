@@ -1,3 +1,8 @@
+2.04
+     -- better documentation
+     -- added test case for passing the store down to nested
+        pipelines.  Fixed the bug too!
+
 2.03
      -- everything inherits from Pipeline::Base now 
      -- added Pipeline::Store::ISA to the distribution

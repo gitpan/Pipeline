@@ -9,7 +9,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw ( blessed );
 use base qw ( Pipeline::Segment );
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 sub init {
   my $self = shift;
@@ -38,23 +38,16 @@ sub dispatch {
 
 sub dispatch_loop {
   my $self   = shift;
-  my $parent = shift;
+  my $parent = shift || $self;
   my $torun  = shift || $self->pipeline;
-
-  ##
-  ## if we have a parent, then we use its store, otherwise
-  ## we use the one that we have initialized
-  ##
-  my $store;
-  if (defined( $parent )) {
-    $store = $parent->store();
-  } else {
-    $store = $self->store();
-  }
 
   my $result;
   foreach my $seg ( @$torun ) {
-    my @result = $self->dispatch_segment( $seg );
+
+    if ($seg->isa('Pipeline')) {
+      $seg->store( $parent->store );
+    }
+    my @result = $parent->dispatch_segment( $seg );
 
     foreach my $res (@result) {
       ## have we got a blessed reference?
@@ -67,13 +60,15 @@ sub dispatch_loop {
 	  } else {
 	    $result = $res;
 	  }
-	  $self->store->set( $res );
-	} ## is it a segment to cleanup?
+	  $parent->store->set( $res );
+	} 
+	## is it a segment to cleanup?
 	elsif ($res->isa("Pipeline::Segment")) {
 	  ## we need to add this to the cleanups
 	  $self->add_cleanup( $res );
-	} else {  ## okay, well, we'll stuff in in the store and hope
-	  $self->store->set( $res );
+	} else {
+	  ## okay, well, we'll stuff in in the store and hope
+	  $parent->store->set( $res );
 	}
       }
     }
@@ -221,7 +216,8 @@ this is set to a Pipeline::Store::Simple object.
 
 =head1 SEE ALSO
 
-C<Pipeline::Segment>
+C<Pipeline::Segment>, C<Pipeline::Store>, C<Pipeline::Store::Simple>
+C<Pipeline::Production>
 
 =head1 AUTHOR
 

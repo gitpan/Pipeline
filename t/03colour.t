@@ -24,8 +24,8 @@ use Test::More tests => 6;
 my $water = Water->new();
 isa_ok($water, 'Water', "should get water object");
 is($water->colour, 'clear', "water should be clear");
-$water->colour("red");
-is($water->colour, 'red', "water should be red");
+$water->dye("blue");
+is($water->colour, 'light slate blue', "water should be light slate blue");
 
 # Create a water pipeline with red and blue dyes
 

@@ -3,7 +3,7 @@ package Pipeline::Base;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 sub new {
   my $class = shift;

@@ -12,3 +12,26 @@ sub dispatch {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyPipeCleanup
+
+=head1 DESCRIPTION
+
+C<MyPipeCleanup> is a module used by the C<Pipeline> tests which
+resets the C<MyPipe> instance count.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright 2002 Fotango Ltd. All Rights Reserved.
+
+This software is released under the same terms as Perl itself.
+
+=cut

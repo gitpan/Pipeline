@@ -8,11 +8,12 @@ lib/Pipeline/Production.pm
 lib/Pipeline/Segment.pm
 lib/Pipeline/Segment/Tester.pm
 lib/Pipeline/Store.pm
-lib/Pipeline/Store/Simple.pm
 lib/Pipeline/Store/ISA.pm
+lib/Pipeline/Store/Simple.pm
 t/00load.t
 t/01simple.t
 t/03colour.t
+t/04storepipe.t
 t/lib/Dye.pm
 t/lib/MyPipe.pm
 t/lib/MyPipeCleanup.pm

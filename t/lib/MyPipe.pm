@@ -22,3 +22,30 @@ sub dispatch {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyPipe
+
+=head1 DESCRIPTION
+
+C<MyPipe> is a module used by the C<Pipeline> tests which keeps track
+of the number of instances of it and returns a production (and a
+C<MyPipeCleanup> cleanup handler) if there are two instances of the
+object.
+
+=head1 AUTHOR
+
+James A. Duncan <jduncan@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright 2002 Fotango Ltd. All Rights Reserved.
+
+This software is released under the same terms as Perl itself.
+
+=cut
+
+

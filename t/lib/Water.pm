@@ -24,3 +24,37 @@ sub dye {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Water - represent water in a pipeline
+
+=head1 SYNOPSIS
+
+  use Water;
+  my $water = Water->new();
+  print "Water is: " . $water->colour . "\n"; # clear
+  $water->dye("blue");
+  print "Water is: " . $water->colour . "\n"; # light slate blue
+
+=head1 DESCRIPTION
+
+C<Water> is a module used by the C<Pipeline> tests. It represents a
+small amount of water, which starts off clear and can be dyed by other
+colours.
+
+=head1 AUTHOR
+
+Leon Brocard <leon@fotango.com>
+
+=head1 COPYRIGHT
+
+Copyright 2002 Fotango Ltd. All Rights Reserved.
+
+This software is released under the same terms as Perl itself.
+
+=cut
+
+

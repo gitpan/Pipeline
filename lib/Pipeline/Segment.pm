@@ -3,7 +3,7 @@ package Pipeline::Segment;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 use Pipeline::Base;
 use base qw ( Pipeline::Base );
@@ -77,9 +77,18 @@ of the segment.
 
 =back
 
+=head1 SEE ALSO
+
+C<Pipeline>
+
 =head1 AUTHOR
 
 James A. Duncan <jduncan@fotango.com>
 
+=head1 COPYRIGHT
 
+Copyright 2002 Fotango Ltd. All Rights Reserved.
+
+This software is released under the same terms as Perl itself.
 =cut
+

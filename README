@@ -73,7 +73,8 @@ WRITING A PIPELINE
         initialization this is set to a Pipeline::Store::Simple object.
 
 SEE ALSO
-    "Pipeline::Segment"
+    "Pipeline::Segment", "Pipeline::Store", "Pipeline::Store::Simple"
+    "Pipeline::Production"
 
 AUTHOR
     James A. Duncan <jduncan@fotango.com> Leon Brocard <acme@astray.com>

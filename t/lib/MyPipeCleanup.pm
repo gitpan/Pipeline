@@ -5,7 +5,7 @@ use warnings::register;
 use Pipeline::Segment;
 use base qw ( Pipeline::Segment );
 
-sub enter {
+sub dispatch {
   ## resets the number of instances that the MyPipe class
   ## has created
   $MyPipe::instance = 0;

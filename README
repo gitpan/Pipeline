@@ -1,0 +1,78 @@
+NAME
+    Pipeline - Generic pipeline interface
+
+SYNOPSIS
+      use Pipeline;
+      my $pipeline = Pipeline->new();
+      $pipeline->add_segment( @segments );
+      $pipeline->dispatch();
+
+DESCRIPTION
+    "Pipelines" are a mechanism to process data. They are designed to be
+    plugged together to make fairly complex operations act in a fairly
+    straightforward manner, cleanly, and simply.
+
+USING THE PIPELINE MODULE
+    The usage of the generic pipeline module is fairly simple. You
+    instantiate a Pipeline object by using the *new()* constructor.
+
+    Segments can be added to the pipeline with the add_segment method.
+
+    The store that the Pipeline will use can be set by calling the *store()*
+    method later on. If a store is not set by the time a pipeline is
+    executing then it will use a store of the type "Pipeline::Store::Simple"
+
+    To start the pipeline running call the *dispatch()* method on your
+    Pipeline object.
+
+WRITING A PIPELINE
+  INHERITANCE
+    Pipelines are designed to be inherited from. The inheritance tree is
+    somewhat warped and should look a little like this:
+
+         MySegment --> Pipeline::Segment <--- Pipeline
+
+    In other words, everything is a pipeline segment.
+
+  METHODS
+    init()
+        Things to do at construction time. If you do override this, its will
+        often be fairly important that you call $self->SUPER::init() to make
+        sure that the setup is done correctly.
+
+    add_segment( LIST )
+        Adds a segment or segments to the pipeline.
+
+    add_cleanup( LIST )
+        Adds a segment or segments to the cleanup pipeline, that gets
+        executed after the pipeline has finished.
+
+    dispatch()
+        Starts the pipeline execution, returns the production or undef
+
+    dispatch_loop( Pipeline, [ ARRAYREF ] )
+        The "dispatch_loop" method performs the processing for the pipeline
+
+    dispatch_segment( Pipeline::Segment )
+        The "dispatch_segment" method handles the execution of an individual
+        segment object.
+
+    cleanup( [ value ] )
+        "cleanup" gets and sets the value of the cleanup list. At
+        initialization this is set to an array reference.
+
+    pipeline( [ value ] )
+        "pipeline" gets and sets the value of the pipeline list. At
+        initialization this is set to an array reference.
+
+    store( [ Pipeline::Store ] )
+        "store" gets and sets the value of a Pipeline's store. At
+        initialization this is set to a Pipeline::Store::Simple object.
+
+AUTHOR
+    James A. Duncan <jduncan@fotango.com> Leon Brocard <acme@astray.com>
+
+COPYRIGHT
+    Copyright 2002 Fotango Ltd. Licensed under the same terms as Perl
+    itself.
+

@@ -11,16 +11,18 @@ sub init {
   $self->{type} = ($params{type} || 'in');
 }
 
-sub enter {
-  my($self, $store) = @_;
+sub dispatch {
+  my($self, $pipe) = @_;
 
   if ($self->{type} eq 'in') {
     my $water = Water->new();
     return $water;
   } elsif ($self->{type} eq 'out') {
-    my $water = $store->get('Water');
+    my $water = $pipe->store->get('Water');
     my $production = Pipeline::Production->new();
-    $production->contains($water);
+        
+    $production->contents($water);
+
     return $production;
   } else {
     warn "unknown tap type $self->{type}\n";

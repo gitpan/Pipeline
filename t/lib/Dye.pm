@@ -8,14 +8,14 @@ use base qw (Pipeline::Segment);
 sub init {
   my $self = shift;
   my %params = @_;
-  $self->{ink} = ($params{type} || 'green');
+  $self->{ink} = ($params{ink} || 'green');
 }
 
-sub enter {
-  my($self, $store) = @_;
+sub dispatch {
+  my($self, $pipe) = @_;
 
-  my $water = $store->get('Water');
-  $water->{colour} = $self->{ink};
+  my $water = $pipe->store->get('Water');
+  $water->dye($self->{ink});
   return $water;
 }
 

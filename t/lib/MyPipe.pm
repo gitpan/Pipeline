@@ -12,11 +12,11 @@ sub init {
   $self->{instance} = $instance;
 }
 
-sub enter {
+sub dispatch {
   my $self = shift;
   if ($self->{instance} == 2) {
     my $production = Pipeline::Production->new();
-    $production->contains( $self );
+    $production->contents( $self );
     return ($production, MyPipeCleanup->new());
   }
 }

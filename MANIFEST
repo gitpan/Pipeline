@@ -1,13 +1,14 @@
+README
 MANIFEST
 Makefile.PL
 lib/Pipeline.pm
 lib/Pipeline/Production.pm
-lib/Pipeline/Robust.pm
 lib/Pipeline/Segment.pm
+lib/Pipeline/Segment/Tester.pm
 lib/Pipeline/Store.pm
 lib/Pipeline/Store/Simple.pm
+t/00load.t
 t/01simple.t
-t/02robust.t
 t/03colour.t
 t/lib/Dye.pm
 t/lib/MyPipe.pm

@@ -38,17 +38,22 @@ WRITING A PIPELINE
     In other words, everything is a pipeline segment.
 
   METHODS
+    The Pipeline class inherits from the "Pipeline::Segment" class and
+    therefore also has any additional methods that its superclass may have.
+
     init()
         Things to do at construction time. If you do override this, its will
-        often be fairly important that you call $self->SUPER::init() to make
-        sure that the setup is done correctly.
+        often be fairly important that you call $self->SUPER::init(@_) to
+        make sure that the setup is done correctly.
 
     add_segment( LIST )
         Adds a segment or segments to the pipeline.
 
-    add_cleanup( LIST )
-        Adds a segment or segments to the cleanup pipeline, that gets
-        executed after the pipeline has finished.
+    get_segment( INTEGER )
+        Returns the segment located at the index specified by INTEGER
+
+    del_segment( INTEGER )
+        Deletes the segment located at the index specified by INTEGER
 
     dispatch()
         Starts the pipeline execution, returns the production or undef
@@ -60,26 +65,27 @@ WRITING A PIPELINE
         The "dispatch_segment" method handles the execution of an individual
         segment object.
 
-    cleanup( [ value ] )
-        "cleanup" gets and sets the value of the cleanup list. At
-        initialization this is set to an array reference.
+    cleanups()
+        Returns the cleanup pipeline. This is a pipeline in and of itself,
+        and all the methods you can call on a pipeline can also be called on
+        this.
 
-    pipeline( [ value ] )
-        "pipeline" gets and sets the value of the pipeline list. At
-        initialization this is set to an array reference.
+    cleanup()
+        Starts the cleanup pipeline going
 
-    store( [ Pipeline::Store ] )
-        "store" gets and sets the value of a Pipeline's store. At
-        initialization this is set to a Pipeline::Store::Simple object.
+    segments( [ value ] )
+        "segments" gets and sets the value of the pipeline list. At
+        initialization this is set to an array reference.
 
 SEE ALSO
     "Pipeline::Segment", "Pipeline::Store", "Pipeline::Store::Simple"
     "Pipeline::Production"
 
-AUTHOR
-    James A. Duncan <jduncan@fotango.com> Leon Brocard <acme@astray.com>
+AUTHORS
+      James A. Duncan <jduncan@fotango.com>
+      Leon Brocard <acme@astray.com>
 
 COPYRIGHT
-    Copyright 2002 Fotango Ltd. Licensed under the same terms as Perl
+    Copyright 2003 Fotango Ltd. Licensed under the same terms as Perl
     itself.
 

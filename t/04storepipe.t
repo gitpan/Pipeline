@@ -23,6 +23,7 @@ package main;
 my $storeelem = MyElem->new();
 my $pipe1 = Pipeline->new();
 my $pipe2 = Pipeline->new();
+#$pipe2->debug( 1 );
 
 $pipe2->add_segment( MyTest->new() );
 $pipe1->add_segment( MyTest->new() );
@@ -30,4 +31,5 @@ $pipe1->add_segment( MyTest->new() );
 $pipe1->store()->set($storeelem);
 $pipe1->add_segment( $pipe2 );
 
+#$pipe1->debug( 1 );
 $pipe1->dispatch();

@@ -6,38 +6,28 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION = "2.05";
+our $VERSION = '3.00';
 
 sub new {
   my $class = shift;
-  my $self  = {};
-  bless $self, $class;
-  $self->init();
-  return $self;
+  return $::TRANSACTION_STORE ||= $class->SUPER::new( @_ );
 }
 
 sub init {
   my $self = shift;
-  $self->store( {} );
-}
-
-sub store {
-  my $self = shift;
-  my $store = shift;
-  if (defined( $store )) {
-    $self->{store} = $store;
-    return $self;
+  if ($self->SUPER::init( @_ ) && ref($self) ne 'Pipeline::Store') {
+    return 1; 
   } else {
-    return $self->{store};
+    return 0;
   }
 }
 
 sub set {
-
+  throw Pipeline::Error::Abstract;
 }
 
 sub get {
-
+  throw Pipeline::Error::Abstract;
 }
 
 1;
@@ -51,14 +41,15 @@ Pipeline::Store - defines the interface for Pipeline store classes
 
   use Pipeline::Store; # interface class, does very little
 
-  my $store = Pipeline::Store->new();
-
 =head1 DESCRIPTION
 
 C<Pipeline::Store> provides a constructor and a generic get/set interface
 for any class implementing a store to sit on a Pipeline.
 
 =head1 METHODS
+
+The Pipeline class inherits from the C<Pipeline::Base> class and therefore
+also has any additional methods that its superclass may have.
 
 =over 4
 
@@ -90,6 +81,12 @@ Does nothing in Pipeline::Store - exists as a placeholder for subclasses.
 =head1 SEE ALSO
 
 C<Pipeline>, C<Pipeline::Store::Simple>, C<Pipeline::Store::ISA>
+
+=head1 COPYRIGHT
+
+Copyright 2003 Fotango Ltd. All Rights Reserved
+
+This module is released under the same license as Perl itself.
 
 =head1 AUTHOR
 

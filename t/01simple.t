@@ -5,11 +5,13 @@ use strict;
 # works correctly (and has a cleanup segment run properly)
 
 use lib './lib';
+use lib 'oldt/lib';
 use lib 't/lib';
 
 use MyPipe;
 use MyPipeCleanup;
 use Pipeline;
+use Data::Dumper;
 use Test::Simple tests => 3;
 
 my $pipeline  = Pipeline->new();
@@ -17,6 +19,7 @@ my $subpipeline = Pipeline->new();
 
 $subpipeline->add_segment( MyPipe->new() );
 $pipeline->add_segment( MyPipe->new(), MyPipe->new(), $subpipeline );						
+print Dumper( $pipeline );
 
 ok($pipeline, "we have a pipeline");
 my $production = $pipeline->dispatch();

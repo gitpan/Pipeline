@@ -3,31 +3,46 @@ package Pipeline::Segment;
 use strict;
 use warnings::register;
 
-our $VERSION = "2.05";
-
 use Pipeline::Base;
-use base qw ( Pipeline::Base );
+use Pipeline::Error::Abstract;
 
-sub new {
-  my $class = shift;
-  my $self  = {};
-  bless $self, $class;
-  $self->init( @_ );
-  return $self;
-}
+use base qw( Pipeline::Base );
+
+our $VERSION = '3.00';
 
 sub init {
   my $self = shift;
   if ($self->SUPER::init()) {
-    return 1;
+    $self->parent( '' );
+    return 1; 
+  } else {
+    return undef;
   }
 }
 
 sub dispatch {
+  throw Pipeline::Error::Abstract;
+}
+
+sub parent {
   my $self = shift;
-  my $pipe = shift;
-  {
-    # ... do something ... #
+  my $seg  = shift;
+  if (defined( $seg )) {
+    $self->{ parent } = $seg;
+    return $self;
+  } else {
+    return $self->{ parent };
+  }
+}
+
+sub store {
+  my $self = shift;
+  my $store = shift;
+  if (defined( $store )) {
+    $self->{ store } = $store;
+    return $self;
+  } else {
+    return $self->{ store };
   }
 }
 
@@ -45,40 +60,35 @@ Pipeline::Segment - basic class for a segment
 
 =head1 DESCRIPTION
 
-C<Pipeline::Segment> is designed as a part of the C<Pipeline> system.  Although
-the Pipeline::Segment class can be used as is to achieve Nothing At All, it is
-designed to be inherited from as a part of the Pipeline system.  The primary
-method that needs to be overloaded is the C<dispatch> method, which the Pipeline
-class uses to enter each individual segment that it contains.
+C<Pipeline::Segment> is designed as a part of the C<Pipeline> system.  The
+C<Pipeline::Segment> class is designed to be subclassed as a part of the Pipeline
+system.  The primary method that needs to be overloaded is the C<dispatch> method,
+which the Pipeline class uses to enter each individual segment that it contains.
 
 =head1 METHODS
 
+The C<Pipeline::Segment> class inherits from C<Pipeline::Base> and therefore
+also has any additional methods that its superclass may have.
+
 =over 4
-
-=item new()
-
-The C<new> method creates a new object of the class C<Pipeline::Segment> and
-returns it to the creator.  In the process it calls the init method.
 
 =item init()
 
 The C<init> method is called at construction time.  Any arguments passed to the
 C<new> method are passed to it.
 
-=item dispatch( Pipeline )
+=item dispatch()
 
-The C<dispatch> method causes the Pipeline::Segment to perform its action. It receives
-the C<Pipeline> object that it is being executed from.
+The C<dispatch> method causes the segment to perform its action.
 
-=item debug( [ VALUE ] )
+=item store()
 
-The C<debug> method sets the debug value for the Pipeline::Segment.
+The C<store> method gets the current store.
 
-=item emit( <MESSAGE> [, FORCE] )
+=item parent()
 
-The C<emit> method prints MESSAGE to STDERR if the segments debug level has been set to 
-a true value.  If FORCE is a true value MESSAGE gets printed regardless of the debug level
-of the segment.
+The C<parent> method returns the pipeline that the segment is current operating from.
+It is set at dispatch time by the calling pipeline.
 
 =back
 
@@ -92,8 +102,9 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright 2002 Fotango Ltd. All Rights Reserved.
+Copyright 2003 Fotango Ltd. All Rights Reserved.
 
 This software is released under the same terms as Perl itself.
 =cut
+
 

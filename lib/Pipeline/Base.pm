@@ -3,14 +3,19 @@ package Pipeline::Base;
 use strict;
 use warnings::register;
 
-our $VERSION = "2.05";
+use Error;
+use Pipeline::Error::Construction;
+
+our $VERSION = '3.00';
 
 sub new {
   my $class = shift;
   my $self  = {};
-  bless $self, $class;
-  $self->init( @_ );
-  return $self;
+  if (bless($self, $class)->init( @_ )) {
+    return $self;
+  } else {
+    Pipeline::Error::Construction->throw();
+  }
 }
 
 sub init {
@@ -20,29 +25,39 @@ sub init {
 
 sub debug {
   my $self = shift;
-  return 1 unless ref( $self );
-  my $dbg  = shift;
-  if (defined($dbg)) {
-    $self->{debug} = $dbg;
+
+  return 1 if !ref($self);
+
+  my $level = shift;
+  if (defined( $level )) {
+    $self->{ debug } = $level;
     return $self;
   } else {
-    return $self->{debug};
+    return $self->{ debug };
   }
 }
 
 sub emit {
   my $self = shift;
-  my $mesg  = shift;
-  my $force = shift;
-  if ($self->debug() || $force) {
-    print STDERR '[';
-    print STDERR ref($self);
-    print STDERR ']';
-    print STDERR " $mesg\n";
-  }
+  my $mesg = shift;
+  $self->log( $self->_format_message( $mesg ) ) if $self->debug;
+}
+
+sub log {
+  my $self = shift;
+  my $mesg = shift;
+  print STDERR $mesg;
+}
+
+sub _format_message {
+  my $self = shift;
+  my $mesg = shift;
+  my $class = ref( $self );
+  return "[$class] $mesg\n";
 }
 
 1;
+
 
 =head1 NAME
 
@@ -71,21 +86,27 @@ construction and initialization of new objects.
 The C<new()> method is a constructor that returns an instance of receiving
 class.
 
-=item OBJECT->init( LIST );
+=item init( LIST );
 
 C<init()> is called by the constructor, C<new()> and is passed all of its 
 arguments in LIST.
 
-=item OBJECT->debug( [ SCALAR ] )
+=item debug( [ SCALAR ] )
 
 The C<debug()> method gets and sets the debug state of the OBJECT.  Setting it
 to a true value will cause messages sent to C<emit()> to be printed to the
-terminal.
+terminal.  If debug() is called as a class method it always will return true.
 
-=item OBJECT->emit( SCALAR )
+=item emit( SCALAR )
 
-C<emit()> is a debugging tool.  It will output SCALAR to STDERR, along with
-the class the message was sent from.
+C<emit()> is a debugging tool.  It will cause the the SCALAR to be formatted and
+sent to the C<log()> method if the current debugging level is set to a true value.
+
+=item log( SCALAR )
+
+The C<log()> method will send SCALAR to STDERR by default.  It performs no processing
+of SCALAR and merely sends its results to the error handle.  To change your logging
+mechanism simply override this method in the class as you see fit.
 
 =back
 
@@ -94,3 +115,4 @@ the class the message was sent from.
 James A. Duncan <jduncan@fotango.com>
 
 =cut
+

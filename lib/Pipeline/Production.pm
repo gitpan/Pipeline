@@ -3,22 +3,39 @@ package Pipeline::Production;
 use strict;
 use warnings::register;
 
-our $VERSION = "2.05";
 use Pipeline::Base;
-use base qw ( Pipeline::Base );
+use base qw( Pipeline::Base );
+
+our $VERSION = '3.00';
+
+sub init {
+  my $self = shift;
+  if ($self->SUPER::init( @_ )) {
+    $self->contents( '' );
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
 sub contents {
   my $self = shift;
-  my $contains = shift;
-  if (defined( $contains )) {
-    $self->{contents} = $contains;
+  $self->contains( @_ );
+}
+
+sub contains {
+  my $self = shift;
+  my $cont = shift;
+  if (defined( $cont )) {
+    $self->{ production_contains } = $cont;
     return $self;
   } else {
-    return $self->{contents};
+    return $self->{ production_contains };
   }
 }
 
 1;
+
 
 =head1 NAME
 
@@ -59,6 +76,10 @@ initialization on the object.
 The C<contents> method gets or sets the contents of the production, ie, the
 actual production itself.
 
+=item contains( [ SCALAR ] )
+
+A synonym for C<contents>
+
 =back
 
 =head1 SEE ALSO
@@ -71,7 +92,9 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright 2002 Fotango Ltd. All Rights Reserved.
+Copyright 2003 Fotango Ltd. All Rights Reserved.
 
 This software is released under the same terms as Perl itself.
+
 =cut
+

@@ -4,32 +4,44 @@ use strict;
 use warnings::register;
 
 use Pipeline::Store;
-use base qw ( Pipeline::Store );
+use base qw( Pipeline::Store );
 
-our $VERSION = "2.05";
+our $VERSION = '3.00';
+
+sub init {
+  my $self = shift;
+  if ($self->SUPER::init( @_ )) {
+    $self->storehash( {} );
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+sub storehash {
+  my $self = shift;
+  my $hash = shift;
+  if (defined( $hash )) {
+    $self->{ storehash } = $hash;
+    return $self;
+  } else {
+    return $self->{ storehash };
+  }
+}
 
 sub set {
   my $self = shift;
-  my $thing = shift;
-  $self->emit("storing " . ref($thing));
-  $self->store->{ ref( $thing ) } = $thing;
+  my $obj  = shift;
+  if (defined( $obj )) {
+    $self->storehash->{ ref($obj) } = $obj;
+  }
   return $self;
 }
 
 sub get {
   my $self = shift;
-  my $this = shift;
-
-  $self->emit("fetching $this");
-
-  ## is something requesting a copy of 
-  ## the store?
-  if ($this eq ref($self)) {
-    ## yup, just return $self
-    return $self;
-  }
-
-  return $self->store->{ $this };
+  my $key  = shift;
+  return $self->storehash->{ $key };
 }
 
 1;
@@ -63,7 +75,7 @@ includes its methods also.
 
 =item set( OBJECT )
 
-The C<set> method stores an object specified by OBJECT in itself.
+The C<set> method puts OBJECT in the store.
 
 =item get( SCALAR )
 
@@ -83,9 +95,10 @@ James A. Duncan <jduncan@fotango.com>
 
 =head1 COPYRIGHT
 
-Copyright 2002 Fotango Ltd. All Rights Reserved.
+Copyright 2003 Fotango Ltd. All Rights Reserved.
 
 This software is released under the same terms as Perl itself.
 =cut
+
 
 

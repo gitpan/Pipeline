@@ -12,6 +12,7 @@ BEGIN {
 }
 
 use lib './lib';
+use lib 'oldt/lib';
 use lib 't/lib';
 use Dye;
 use Tap;

@@ -4,123 +4,120 @@ use strict;
 use warnings::register;
 
 use Pipeline::Segment;
-use Pipeline::Production;
 use Pipeline::Store::Simple;
-use Scalar::Util qw ( blessed );
-use base qw ( Pipeline::Segment );
+use Scalar::Util qw( blessed );
+use base qw( Pipeline::Segment );
 
-our $VERSION = "2.05";
+our $VERSION = '3.00';
 
 sub init {
   my $self = shift;
-  $self->pipeline( [] );
-  $self->cleanup( [] );
-  $self->store( Pipeline::Store::Simple->new() );
-  $self->SUPER::init( @_ );
+  if ($self->SUPER::init( @_ )) {
+    $self->store( Pipeline::Store::Simple->new() );
+    $self->segments( [] );
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 sub add_segment {
   my $self = shift;
-  push @{$self->pipeline}, @_;
+  push @{ $self->segments }, grep { blessed( $_ ) && $_->isa('Pipeline::Segment') } @_;
 }
 
-sub add_cleanup {
+sub get_segment {
   my $self = shift;
-  push @{$self->cleanup}, @_;
+  my $idx  = shift;
+  return $self->segments->[ $idx ];
+}
+
+sub del_segment {
+  my $self = shift;
+  my $idx  = shift;
+  splice( @{ $self->segments }, $idx, 1 );
+}
+
+sub segments {
+  my $self = shift;
+  my $segs = shift;
+  if (defined( $segs )) {
+    $self->{ segments } = $segs; 
+    return $self;
+  } else {
+    return $self->{ segments };
+  }
 }
 
 sub dispatch {
   my $self = shift;
   my $result = $self->dispatch_loop();
-  $self->dispatch_loop( $self, $self->cleanup );
+
+  $self->cleanup;
+
   return $result;
 }
 
 sub dispatch_loop {
-  my $self   = shift;
-  my $parent = shift || $self;
-  my $torun  = shift || $self->pipeline;
-
-  foreach my $seg ( @$torun ) {
-    my $result;
-    next unless ref($seg);
-    if ($seg->isa('Pipeline')) {
-      $seg->store( $parent->store );
-    }
-
-    my @result = $parent->dispatch_segment( $seg );
-
-    foreach my $res (@result) {
-      ## have we got a blessed reference?
-      if ( blessed( $res ) ) {
-	## yup, okay, is it a production?
-	if ($res->isa("Pipeline::Production")) {
-	  ## we stop the dispatch loop here
-	  if ($res->can( 'contents' )) {
-	    $result = $res->contents();
-	  } else {
-	    $result = $res;
-	  }
-	  $parent->store->set( $res );
-	  return $result;
-	} 
-	## is it a segment to cleanup?
-	elsif ($res->isa("Pipeline::Segment")) {
-	  ## we need to add this to the cleanups
-	  $self->add_cleanup( $res );
-	} else {
-	  ## okay, well, we'll stuff in in the store and hope
-	  $parent->store->set( $res );
-	}
+  my $self = shift;
+  foreach my $segment (@{ $self->segments }) {
+    my @results = $self->dispatch_segment( $segment );
+    foreach my $result ( @results ) {
+      next unless blessed $result;
+      if ( $result->isa('Pipeline::Segment') ) {
+        $self->cleanups->add_segment( $result )
+      } elsif ( $result->isa('Pipeline::Production') ) {
+        my $final = $result->contents;
+        $self->store->set( $final );
+        return $final;
+      } else {
+        $self->store->set( $result );
       }
     }
-    if ($result) { return $result };
   }
-
-  return 1;
 }
 
 sub dispatch_segment {
   my $self = shift;
-  my $seg  = shift;
-  $seg->emit('dispatching',$self->debug());
-  return $seg->dispatch( $self );
+  my $segment = shift;
+  
+  $segment->parent( $self );
+  $segment->store( $self->store );
+
+  $self->emit("dispatching to " . ref($segment));
+
+  my @results = $segment->dispatch( $self );
+
+  $segment->parent( '' );
+  $segment->store( '' );
+
+  return @results;
 }
+
+## be careful here
 
 sub cleanup {
   my $self = shift;
-  my $pipe = shift;
-  if (defined($pipe)) {
-    $self->{cleanup} = $pipe;
-    return $self;
-  } else {
-    return $self->{cleanup};
+  if ($self->{ cleanup_pipeline }) {
+    $self->{ cleanup_pipeline }
+                               ->parent( $self )
+                               ->store( $self->store() )
+                               ->dispatch();
   }
+  
+  if (!$self->parent) {
+    $::TRANSACTION_STORE = undef;
+  }
+  
 }
 
-sub pipeline {
+sub cleanups {
   my $self = shift;
-  my $pipe = shift;
-  if (defined($pipe)) {
-    $self->{pipeline} = $pipe;
-    return $self;
-  } else {
-    return $self->{pipeline}
-  }
-}
-
-sub store {
-  my $self = shift;
-  my $store = shift;
-  if (defined( $store )) {
-    $self->{store} = $store;
-    return $self;
-  } else {
-    return $self->{store};
-  }
+  $self->{ cleanup_pipeline } ||= ref($self)->new();
 }
 
 1;
+
 
 =head1 NAME
 
@@ -169,22 +166,28 @@ In other words, everything is a pipeline segment.
 
 =head2 METHODS
 
+The Pipeline class inherits from the C<Pipeline::Segment> class and therefore
+also has any additional methods that its superclass may have.
+
 =over 4
 
 =item init()
 
 Things to do at construction time.  If you do override this, its will often
-be fairly important that you call $self->SUPER::init() to make sure that
+be fairly important that you call $self->SUPER::init(@_) to make sure that
 the setup is done correctly.
 
 =item add_segment( LIST )
 
 Adds a segment or segments to the pipeline.
 
-=item add_cleanup( LIST )
+=item get_segment( INTEGER )
 
-Adds a segment or segments to the cleanup pipeline, that gets executed
-after the pipeline has finished.
+Returns the segment located at the index specified by INTEGER
+
+=item del_segment( INTEGER )
+
+Deletes the segment located at the index specified by INTEGER
 
 =item dispatch()
 
@@ -199,20 +202,19 @@ The C<dispatch_loop> method performs the processing for the pipeline
 The C<dispatch_segment> method handles the execution of an individual
 segment object.
 
-=item cleanup( [ value ] )
+=item cleanups()
 
-C<cleanup> gets and sets the value of the cleanup list.  At initialization
+Returns the cleanup pipeline.  This is a pipeline in and of itself, and all the methods
+you can call on a pipeline can also be called on this.
+
+=item cleanup()
+
+Starts the cleanup pipeline going
+
+=item segments( [ value ] )
+
+C<segments> gets and sets the value of the pipeline list.  At initialization
 this is set to an array reference.
-
-=item pipeline( [ value ] )
-
-C<pipeline> gets and sets the value of the pipeline list.  At initialization
-this is set to an array reference.
-
-=item store( [ Pipeline::Store ] )
-
-C<store> gets and sets the value of a Pipeline's store.  At initialization
-this is set to a Pipeline::Store::Simple object.
 
 =back
 
@@ -221,14 +223,14 @@ this is set to a Pipeline::Store::Simple object.
 C<Pipeline::Segment>, C<Pipeline::Store>, C<Pipeline::Store::Simple>
 C<Pipeline::Production>
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-James A. Duncan <jduncan@fotango.com>
-Leon Brocard <acme@astray.com>
+  James A. Duncan <jduncan@fotango.com>
+  Leon Brocard <acme@astray.com>
 
 =head1 COPYRIGHT
 
-Copyright 2002 Fotango Ltd.
+Copyright 2003 Fotango Ltd.
 Licensed under the same terms as Perl itself.
 
 =cut

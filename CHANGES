@@ -1,0 +1,3 @@
+2.01 ???
+     -- can now request a copy of the store from Pipeline::Store::Simple
+     -- added debug() and emit() methods to Pipeline::Segment

@@ -18,6 +18,14 @@ sub set {
 sub get {
   my $self = shift;
   my $this = shift;
+
+  ## is something requesting a copy of 
+  ## the store?
+  if ($this eq ref($self)) {
+    ## yup, just return $self
+    return $self;
+  }
+
   return $self->store->{ $this };
 }
 

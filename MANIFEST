@@ -1,4 +1,5 @@
 README
+CHANGES
 MANIFEST
 Makefile.PL
 lib/Pipeline.pm

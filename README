@@ -25,6 +25,9 @@ USING THE PIPELINE MODULE
     To start the pipeline running call the *dispatch()* method on your
     Pipeline object.
 
+    To see what is being dispatched within a pipeline dispatch set the
+    pipeline's debug value to true.
+
 WRITING A PIPELINE
   INHERITANCE
     Pipelines are designed to be inherited from. The inheritance tree is
@@ -68,6 +71,9 @@ WRITING A PIPELINE
     store( [ Pipeline::Store ] )
         "store" gets and sets the value of a Pipeline's store. At
         initialization this is set to a Pipeline::Store::Simple object.
+
+SEE ALSO
+    "Pipeline::Segment"
 
 AUTHOR
     James A. Duncan <jduncan@fotango.com> Leon Brocard <acme@astray.com>

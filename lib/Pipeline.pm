@@ -9,7 +9,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw ( blessed );
 use base qw ( Pipeline::Segment );
 
-our $VERSION = '2.00';
+our $VERSION = '2.01';
 
 sub init {
   my $self = shift;
@@ -85,6 +85,7 @@ sub dispatch_loop {
 sub dispatch_segment {
   my $self = shift;
   my $seg  = shift;
+  $seg->emit('dispatching',$self->debug());
   return $seg->dispatch( $self );
 }
 
@@ -154,6 +155,9 @@ then it will use a store of the type C<Pipeline::Store::Simple>
 To start the pipeline running call the I<dispatch()> method on your Pipeline
 object.
 
+To see what is being dispatched within a pipeline dispatch set the pipeline's
+debug value to true.  
+
 =head1 WRITING A PIPELINE
 
 =head2 INHERITANCE
@@ -213,6 +217,10 @@ C<store> gets and sets the value of a Pipeline's store.  At initialization
 this is set to a Pipeline::Store::Simple object.
 
 =back
+
+=head1 SEE ALSO
+
+C<Pipeline::Segment>
 
 =head1 AUTHOR
 

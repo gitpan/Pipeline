@@ -3,7 +3,7 @@ package Pipeline::Segment;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.00';
+our $VERSION = '2.01';
 
 sub new {
   my $class = shift;
@@ -20,6 +20,29 @@ sub dispatch {
   my $pipe = shift;
   {
     # ... do something ... #
+  }
+}
+
+sub debug {
+  my $self  = shift;
+  my $debug = shift;
+  if (defined($debug)) {
+    $self->{debug} = $debug;
+    return $self;
+  } else {
+    return $self->{debug};
+  }
+}
+
+sub emit {
+  my $self  = shift;
+  my $mesg  = shift;
+  my $force = shift;
+  if ($self->debug() || $force) {
+    print STDERR '[';
+    print STDERR ref($self);
+    print STDERR ']';
+    print STDERR " $mesg\n";
   }
 }
 
@@ -61,6 +84,16 @@ C<new> method are passed to it.
 
 The C<dispatch> method causes the Pipeline::Segment to perform its action.  Its receives
 the C<Pipeline> object that it is being exectued from.
+
+=item debug( [ VALUE ] )
+
+The C<debug> method sets the debug value for the Pipeline::Segment.
+
+=item emit( <MESSAGE> [, FORCE] )
+
+The C<emit> method prints MESSAGE to STDERR if the segments debug level has been set to 
+a true value.  If FORCE is a true value MESSAGE gets printed regardless of the debug level
+of the segment.
 
 =back
 

@@ -9,13 +9,13 @@ use Pipeline::Error::Abstract;
 
 use base qw( Pipeline::Base );
 
-our $VERSION=3.08;
+our $VERSION=3.09;
 
 sub init {
   my $self = shift;
   if ($self->SUPER::init()) {
     $self->parent( '' );
-    return 1; 
+    return 1;
   } else {
     return undef;
   }
@@ -27,11 +27,25 @@ sub dispatch {
 
 sub dispatch_method { undef }
 
+sub prepare_dispatch {
+  my $self = shift;
+  my $pipe = shift;
+  $self->parent( $pipe );
+  $self->store( $pipe->store );
+}
+
+sub cleanup_dispatch {
+  my $self = shift;
+  $self->{ parent } = undef;
+  $self->{ store } = undef;
+}
+
 sub parent {
   my $self = shift;
   my $seg  = shift;
   if (defined( $seg )) {
     $self->{ parent } = $seg;
+    weaken( $self->{ parent } ) if ref( $seg );
     return $self;
   } else {
     return $self->{ parent };
@@ -88,6 +102,12 @@ The C<dispatch> method causes the segment to perform its action.
 
 The C<dispatch_method> gets and sets the method that gets called on dispatch, by
 default this is the C<dispatch()> method.
+
+=item cleanup_dispatch()
+
+The C<cleanup_dispatch> method does post-processing on the segment to ensure
+no nasty circular references are lying around, as well as disconnecting
+various objects that are only useful during a dispatch.
 
 =item store()
 

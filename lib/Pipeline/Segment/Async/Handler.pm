@@ -5,7 +5,7 @@ use warnings;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.08;
+our $VERSION=3.09;
 
 sub canop { abstract() }
 sub run { abstract() }

@@ -21,6 +21,7 @@ WriteMakefile(
 			    IO::Null   => '0.01',
 			    IO::String => '0.01',
 			    Data::UUID => '0.01',
+			    Data::Structure::Util => '0.04',
 			   }
 	     );
 

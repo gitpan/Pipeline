@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.08;
+our $VERSION=3.09;
 
 sub new {
   my $class = shift;
@@ -30,13 +30,17 @@ sub in_transaction {
 
 sub end_transaction {
   my $self = shift;
-  $::TRANSACTION = 0;
+  if ($self->in_transaction && $self == $::TRANSACTION_STORE) {
+    $::TRANSACTION = 0;
+  } else {
+    $self->emit("cannot clear transaction unless it is called by the same object");
+  }
 }
 
 sub init {
   my $self = shift;
   if ($self->SUPER::init( @_ ) && ref($self) ne 'Pipeline::Store') {
-    return 1; 
+    return 1;
   } else {
     return 0;
   }
@@ -69,7 +73,11 @@ Pipeline::Store - defines the interface for Pipeline store classes
 =head1 DESCRIPTION
 
 C<Pipeline::Store> provides a constructor and a generic get/set interface
-for any class implementing a store to sit on a Pipeline.
+for any class implementing a store to sit on a Pipeline.  Pipeline stores
+are singletons inside the dispatch process.  Ie, if you attempt to construct
+a pipeline store in between the dispatch method being called on a pipeline
+segment and having the method return a value then you will get the same
+store as that segments store() method.
 
 =head1 METHODS
 
@@ -81,12 +89,22 @@ also has any additional methods that its superclass may have.
 =item new()
 
 The C<new> method constructs a new Pipeline::Store object and calls
-the C<init> method.
+the C<init> method.  If the transaction flat is set then it returns
+the current store singleton.
 
 =item init()
 
 The C<init> method is called by new() to do any construction-time initialization
 of an object.
+
+=item start_transaction
+
+Sets the transaction flag, which makes the store object that this is called on a
+singleton until end_transaction is called.
+
+=item end_transaction
+
+Clears the transaction flag, which lets you construct new pipeline stores.
 
 =item store( [ store ] )
 

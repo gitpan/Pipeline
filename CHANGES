@@ -1,8 +1,18 @@
+3.09
+	+ Added weak references to stop a memory leak when we miss
+	  cleaning up the parent of a segment after dispatch -- this
+	  is largely thanks to Pierre's work on Data::Structure::Util
+	+ started refactoring an awful lot of code in Pipeline to
+	  get rid of the mass of the logic that handles the processing
+	  of results
+	+ Added a Pipeline::Dumper dispatch class
+
 3.08
 	+ throws an error if reattach doesn't really work properly (ie,
 	  if it gives unexpected results).
 	+ fixed a bug that meant end_dispatch was only being called if
 	  there was no parent pipeline.  This was a Bad Thing[tm].
+
 3.07
 	+ added dispatcher class to the pipeline
 	+ added Pipeline::Segment::Async class for asyncronous pipeline
@@ -17,13 +27,17 @@
 	+ fixed production returning bug
 	+ fixes bug reported by James Fitzgibbon regarding subclassing
 	  pipeline stores
+
 3.05
 	+ thought of another test, exposed a bug, fixed it
+
 3.04
 	+ fixed a bug that was passing on indv. tests but
 	  causing tests to fail under a make test.
+
 3.03
 	+ Added Error.pm to Makefile.PL
+
 3.02
 	+ Added DESTROY to cleanup Transaction store
 	+ Applied patches from spurkis@cpan.org in 

@@ -5,7 +5,7 @@ use strict;
 use Error;
 use base qw( Error );
 
-our $VERSION=3.08;
+our $VERSION=3.09;
 
 sub new {
   my $class = shift;
@@ -23,7 +23,7 @@ sub new {
 
 =head1 NAME
 
-Pipeline::Error::AsyncResults - exception thrown from abstract methods
+Pipeline::Error::AsyncResults - exception thrown from asynchronous segments
 
 =head1 SYNOPSIS
 

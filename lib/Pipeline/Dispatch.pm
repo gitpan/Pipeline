@@ -7,7 +7,7 @@ use Pipeline;
 use Pipeline::Base;
 use base qw( Pipeline::Base );
 
-our $VERSION=3.08;
+our $VERSION=3.09;
 
 sub segments {
   my $self = shift;
@@ -55,22 +55,41 @@ sub delete {
   $self;
 }
 
+sub get_next_segment {
+  my $self = shift;
+  my $pipe = shift;
+  my $segment = shift @{$self->segments};
+  return $segment;
+}
+
+sub dispatch_a_segment {
+  my $self = shift;
+  my $seg  = shift;
+  my $meth = $seg->dispatch_method || $self->dispatch_method;
+
+  $self->emit("dispatching to " . ref($seg));
+
+  $seg->parent->start_dispatch();
+
+  my @results = $seg->$meth( $seg->parent );
+
+  $seg->parent->end_dispatch();
+
+  return @results;
+}
+
 sub next {
   my $self = shift;
   my $pipe = shift || Pipeline->new();
 
-  my $segment = shift(@{$self->segments});
-  $segment->parent( $pipe );
-  $segment->store( $pipe->store() );
+  my $segment = $self->get_next_segment( $pipe );
 
-  my $meth = $segment->dispatch_method || $self->dispatch_method;
-
-  $pipe->start_dispatch();
-  my @results = $segment->$meth( $pipe );
+  $segment->prepare_dispatch( $pipe );
+  my @results = $self->dispatch_a_segment( $segment );
+  $segment->cleanup_dispatch( $pipe );
 
   push @{$self->dispatched_segments}, $segment;
 
-  $pipe->end_dispatch();
   return @results;
 }
 
@@ -116,10 +135,10 @@ Pipeline::Dispatch - dispatcher for pipeline segments
 
 =head1 DESCRIPTION
 
-C<Pipeline::Dispatch> simply accepts pipeline segments and does very little with
-them.  It can dispatch segments in order, one by one.  It is also capable of
-altering the way in which it dispatches to each segment, both on a pipeline basis,
-and on a segment-by-segment basis.
+C<Pipeline::Dispatch> simply accepts pipeline segments and does very little
+with them.  It can dispatch segments in order, one by one.  It is also capable
+of altering the way in which it dispatches to each segment, both on a pipeline
+basis, and on a segment-by-segment basis.
 
 =head1 CONSTRUCTOR
 

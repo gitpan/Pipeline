@@ -1,5 +1,5 @@
 README
-Changes
+CHANGES
 MANIFEST			This list of files
 NINJA
 Makefile.PL
@@ -19,6 +19,7 @@ lib/Pipeline/Segment/Async/Handler.pm
 lib/Pipeline/Segment/Async/IThreads.pm
 lib/Pipeline/Segment/Async/Fork.pm
 lib/Pipeline/Dispatch.pm
+lib/Pipeline/Dumper.pm
 t/00load.t
 t/01simple.t
 t/03colour.t
@@ -34,6 +35,7 @@ t/12test_failing_init.t
 t/13emit.t
 t/14transaction.t
 t/15nestedstore.t
+t/16destroy.t
 t/98compile.t
 t/99pod.t
 t/lib/Dye.pm

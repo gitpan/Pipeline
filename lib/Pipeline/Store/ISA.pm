@@ -8,14 +8,46 @@ use base qw ( Pipeline::Store );
 
 use Class::ISA;
 
-our $VERSION=3.08;
+our $VERSION=3.09;
+
+sub init {
+  my $self = shift;
+  if ( $self->SUPER::init( @_ )) {
+    $self->obj_store( {} );
+    $self->isa_store( {} );
+  }
+}
+
+sub obj_store {
+  my $self = shift;
+  if (@_) {
+    $self->{ store } = shift;
+    return $self;
+  }
+  return $self->{ store };
+}
+
+sub isa_store {
+  my $self = shift;
+  if (@_) {
+    $self->{ isa_store } = shift;
+    return $self;
+  }
+  return $self->{ isa_store };
+}
 
 sub set {
   my $self = shift;
   my $obj  = shift;
   my @isa  = Class::ISA::super_path( ref($obj) );
-  $self->{store_isa}->{$_} = ref( $obj ) foreach @isa;
-  $self->{store}->{ref($obj)} = $obj;
+  my $store = $self->isa_store;
+  foreach my $isa (@isa) {
+    if (!exists $self->isa_store->{ $isa }) {
+      $store->{ $isa } = [];
+    }
+    push @{$store->{ $isa }}, ref($obj);
+  }
+  $self->obj_store->{ref($obj)} = $obj;
   $self->emit("setting object " . ref($obj));
   return $self;
 }
@@ -26,11 +58,15 @@ sub get {
 
   $self->emit("$key requested");
 
-  if (exists( $self->{store}->{ $key })) {
+  if (exists( $self->obj_store->{ $key })) {
     $self->emit("returning object $key");
-    return $self->{store}->{ $key };
-  } elsif (exists( $self->{store_isa}->{$key})) {
-    return $self->get( $self->{store_isa}->{$key} );
+    return $self->obj_store->{ $key };
+  } elsif (exists( $self->isa_store->{$key})) {
+    my @objs;
+    foreach my $thing ( @{$self->isa_store->{ $key }} ) {
+      push @objs, $self->get( $thing );
+    }
+    return [ @objs ];
   } else {
     $self->emit("no object $key");
     return undef;
@@ -76,7 +112,9 @@ The C<set> method stores an object specified by OBJECT in itself.
 
 The C<get> method attempts to return an object of the class specified
 by SCALAR.  If an object of that class does not exist in the store it
-returns undef instead.
+returns undef instead.  In the case that you request a super class of
+multiple objects an array reference will be returned containing all
+the objects that are blessed into child classes of SCALAR.
 
 =back
 

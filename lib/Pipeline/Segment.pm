@@ -8,7 +8,7 @@ use Pipeline::Error::Abstract;
 
 use base qw( Pipeline::Base );
 
-our $VERSION = 3.01;
+our $VERSION=3.03;
 
 sub init {
   my $self = shift;

@@ -5,7 +5,7 @@ use strict;
 use Error;
 use base qw( Error );
 
-our $VERSION = 3.01;
+our $VERSION=3.03;
 
 sub new {
   my $class = shift;

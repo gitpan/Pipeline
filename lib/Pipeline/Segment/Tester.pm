@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline;
 use Pipeline::Base;
 use base qw(Pipeline::Base);
-our $VERSION = 3.01;
+our $VERSION=3.03;
 
 sub init {
   my $self = shift;
@@ -32,8 +32,11 @@ sub pipe {
 sub test {
   my $self = shift;
   my $seg  = shift;
+
+  $self->pipe->add_segment($seg);
   $self->pipe->store->set($_) foreach @_;
-  return $seg->dispatch( $self->pipe );
+
+  return $self->pipe->dispatch();
 }
 
 1;
@@ -73,9 +76,11 @@ on the object.
 
 =item test( Pipeline::Segment, [ ARRAY ] )
 
-The C<test> method takes a segment object as its first argument, which it will dispatch.  It takes
-an infinite number of additional paramaters that will be added to the store prior to dispatch of the
-segment.
+The C<test> method takes a segment object as its first argument, which it will add to its
+pipeline before dispatch.  It also takes an infinite number of additional paramaters that
+will be added to the store prior to dispatch of the pipeline.
+
+Returns the production of the pipeline.
 
 =item pipe( [ Pipeline ] )
 

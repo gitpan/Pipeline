@@ -8,7 +8,7 @@ use Pipeline::Store::Simple;
 use Scalar::Util qw( blessed );
 use base qw( Pipeline::Segment );
 
-our $VERSION = 3.01;
+our $VERSION=3.03;
 
 sub init {
   my $self = shift;
@@ -16,15 +16,16 @@ sub init {
     $self->debug( 0 );
     $self->store( Pipeline::Store::Simple->new() );
     $self->segments( [] );
-    return 1;
+    return $self;
   } else {
-    return 0;
+    return undef;
   }
 }
 
 sub add_segment {
   my $self = shift;
   push @{ $self->segments }, grep { blessed( $_ ) && $_->isa('Pipeline::Segment') } @_;
+  return $self;
 }
 
 sub get_segment {
@@ -56,7 +57,7 @@ sub dispatch {
 
   $self->cleanup;
 
-  return $result;
+  return $result || 1;
 }
 
 sub dispatch_loop {
@@ -117,6 +118,28 @@ sub cleanups {
   $self->{ cleanup_pipeline } ||= ref($self)->new();
 }
 
+sub DESTROY {
+  my $self = shift;
+  if (!$self->parent) {
+    $::TRANSACTION_STORE = undef;
+  }
+}
+
+sub debug_all {
+  my $self  = shift;
+  my $debug = shift;
+
+  foreach my $segment (@{ $self->segments }) {
+    $segment->isa( 'Pipeline' )
+      ? $segment->debug_all( $debug )
+      : $segment->debug( $debug );
+  }
+
+  $self->debug( $debug );
+}
+
+
+
 1;
 
 
@@ -172,15 +195,15 @@ also has any additional methods that its superclass may have.
 
 =over 4
 
-=item init()
+=item init( @_ )
 
 Things to do at construction time.  If you do override this, its will often
 be fairly important that you call $self->SUPER::init(@_) to make sure that
-the setup is done correctly.
+the setup is done correctly.  Returns itself on success, undef on failure.
 
 =item add_segment( LIST )
 
-Adds a segment or segments to the pipeline.
+Adds a segment or segments to the pipeline.  Returns itself.
 
 =item get_segment( INTEGER )
 
@@ -188,7 +211,7 @@ Returns the segment located at the index specified by INTEGER
 
 =item del_segment( INTEGER )
 
-Deletes the segment located at the index specified by INTEGER
+Deletes and returns the segment located at the index specified by INTEGER
 
 =item dispatch()
 
@@ -216,6 +239,10 @@ Starts the cleanup pipeline going
 
 C<segments> gets and sets the value of the pipeline list.  At initialization
 this is set to an array reference.
+
+=item debug_all( value )
+
+sets debug( value ) recursively for each segment in this pipeline.
 
 =back
 

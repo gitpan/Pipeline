@@ -12,13 +12,13 @@ use MyPipe;
 use MyPipeCleanup;
 use Pipeline;
 use Data::Dumper;
-use Test::Simple tests => 3;
+use Test::More tests => 8;
 
 my $pipeline  = Pipeline->new();
 my $subpipeline = Pipeline->new();
 
 $subpipeline->add_segment( MyPipe->new() );
-$pipeline->add_segment( MyPipe->new(), MyPipe->new(), $subpipeline );						
+$pipeline->add_segment( MyPipe->new(), MyPipe->new(), $subpipeline );
 print Dumper( $pipeline );
 
 ok($pipeline, "we have a pipeline");
@@ -30,29 +30,16 @@ ok(
   );
 
 
+my $pipe = Pipeline->new();
+my $seg  = MyPipe->new();
+is( $pipe->add_segment( $seg ), $pipe, 'add_segment' );
+is( $pipe->del_segment( 0 ), $seg,     'del_segment' );
+is( $pipe->init, $pipe,                'init' );
 
+my $pipe2 = Pipeline->new();
+my $seg2  = MyPipe->new();
+$pipe->add_segment( $pipe2->add_segment( $seg2 ) );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+is( $pipe->debug_all(1), $pipe, 'debug_all' );
+is( $seg2->debug, 1,            'debug set' );
 

@@ -20,9 +20,7 @@ sub dispatch {
   } elsif ($self->{type} eq 'out') {
     my $water = $pipe->store->get('Water');
     my $production = Pipeline::Production->new();
-        
     $production->contents($water);
-
     return $production;
   } else {
     warn "unknown tap type $self->{type}\n";

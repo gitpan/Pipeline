@@ -6,7 +6,7 @@ use warnings::register;
 use Pipeline::Store;
 use base qw ( Pipeline::Store );
 
-our $VERSION = '2.02';
+our $VERSION = '2.03';
 
 sub set {
   my $self = shift;
@@ -74,6 +74,11 @@ returns undef instead.
 
 James A. Duncan <jduncan@fotango.com>
 
+=head1 COPYRIGHT
+
+Copyright 2002 Fotango Ltd. All Rights Reserved.
+
+This software is released under the same terms as Perl itself.
 =cut
 
 

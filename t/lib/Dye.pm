@@ -1,7 +1,6 @@
 package Dye;
 
 use Pipeline::Segment;
-use Pipeline::Production;
 use Water;
 use base qw (Pipeline::Segment);
 

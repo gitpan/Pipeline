@@ -3,19 +3,9 @@ package Pipeline::Production;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.02';
-
-sub new {
-  my $class = shift;
-  my $self  = {};
-  bless $self, $class;
-  $self->init();
-  return $self;
-}
-
-sub init {
-  my $self = shift;
-}
+our $VERSION = '2.03';
+use Pipeline::Base;
+use base qw ( Pipeline::Base );
 
 sub contents {
   my $self = shift;

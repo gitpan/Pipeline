@@ -3,7 +3,10 @@ package Pipeline::Store;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.02';
+use Pipeline::Base;
+use base qw( Pipeline::Base );
+
+our $VERSION = '2.03';
 
 sub new {
   my $class = shift;
@@ -45,7 +48,6 @@ sub get {
 Pipeline::Store - defines the interface for Pipeline store classes
 
 =head1 SYNOPSIS
-
 
   use Pipeline::Store; # interface class, does very little
 

@@ -1,3 +1,7 @@
+2.03
+     -- everything inherits from Pipeline::Base now 
+     -- added Pipeline::Store::ISA to the distribution
+
 2.02
      -- fixed bug with Pipeline::Productions not terminating the
      	pipeline.  This was a very silly bug to have.

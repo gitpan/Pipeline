@@ -3,7 +3,10 @@ package Pipeline::Segment;
 use strict;
 use warnings::register;
 
-our $VERSION = '2.02';
+our $VERSION = '2.03';
+
+use Pipeline::Base;
+use base qw ( Pipeline::Base );
 
 sub new {
   my $class = shift;
@@ -23,29 +26,6 @@ sub dispatch {
   }
 }
 
-sub debug {
-  my $self  = shift;
-  my $debug = shift;
-  if (defined($debug)) {
-    $self->{debug} = $debug;
-    return $self;
-  } else {
-    return $self->{debug};
-  }
-}
-
-sub emit {
-  my $self  = shift;
-  my $mesg  = shift;
-  my $force = shift;
-  if ($self->debug() || $force) {
-    print STDERR '[';
-    print STDERR ref($self);
-    print STDERR ']';
-    print STDERR " $mesg\n";
-  }
-}
-
 1;
 
 =head1 NAME
@@ -54,9 +34,9 @@ Pipeline::Segment - basic class for a segment
 
 =head1 SYNOPSIS
 
-use Pipeline::Segment;
-my $ps = Pipeline::Segment->new();
-$ps->dispatch();
+  use Pipeline::Segment;
+  my $ps = Pipeline::Segment->new();
+  $ps->dispatch();
 
 =head1 DESCRIPTION
 
@@ -82,8 +62,8 @@ C<new> method are passed to it.
 
 =item dispatch( Pipeline )
 
-The C<dispatch> method causes the Pipeline::Segment to perform its action.  Its receives
-the C<Pipeline> object that it is being exectued from.
+The C<dispatch> method causes the Pipeline::Segment to perform its action. It receives
+the C<Pipeline> object that it is being executed from.
 
 =item debug( [ VALUE ] )
 

@@ -1,13 +1,15 @@
-README
 CHANGES
-MANIFEST
+MANIFEST			This list of files
 Makefile.PL
+README
 lib/Pipeline.pm
+lib/Pipeline/Base.pm
 lib/Pipeline/Production.pm
 lib/Pipeline/Segment.pm
 lib/Pipeline/Segment/Tester.pm
 lib/Pipeline/Store.pm
 lib/Pipeline/Store/Simple.pm
+lib/Pipeline/Store/ISA.pm
 t/00load.t
 t/01simple.t
 t/03colour.t
